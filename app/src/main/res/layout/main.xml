@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="#141111"
+        android:text="012345678"
+        android:textColor="#FFFF"
+        android:textSize="75sp"
+        android:gravity="right|bottom"
+        android:maxLength="9"
+
+        />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <Button
+            android:id="@+id/button_AC"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="AC"
+            android:textSize="35sp" />
+
+        <Button
+            android:id="@+id/button_Symbol"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="+/-"
+            android:textSize="35sp"
+            android:layout_toRightOf="@id/button_AC"/>
+
+        <Button
+            android:id="@+id/button_Percent"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="%"
+            android:textSize="35sp"
+            android:layout_toRightOf="@id/button_Symbol"/>
+
+        <Button
+            android:id="@+id/button_Division"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="÷"
+            android:textSize="35sp"
+            android:layout_toRightOf="@id/button_Percent"/>
+    </RelativeLayout>
+
+</LinearLayout>
