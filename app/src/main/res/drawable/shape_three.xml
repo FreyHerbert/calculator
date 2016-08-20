@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <!-- shape是圆角矩形 -->
+        <shape android:shape="rectangle">
+            <!-- solid指明该按钮是实心效果，而不是渐变等其他效果 -->
+            <solid android:color="#FFEB914E"/>
+            <!-- stroke是边缘颜色，width表示边缘宽度，color是边缘颜色 -->
+            <!-- stroke可用于实现边缘模糊，反光等效果 -->
+            <stroke android:width="1dip" android:color="#141111" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="0dip"/>
+            <solid android:color="#FFFF9853" />
+        </shape>
+    </item>
+</selector>
