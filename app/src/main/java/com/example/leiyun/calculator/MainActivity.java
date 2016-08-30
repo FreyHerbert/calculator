@@ -103,21 +103,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (clear == 0)
-            drop.setText("AC");
-        else
-            drop.setText("C");
         switch (v.getId()) {
             case R.id.button_AC:
-                if (clear == 0) {
-                    showBuff.setLength(0);
-                    view.setText("0");
-                }else {
-                    showBuff.setLength(0);
-                    view.setText("0");
-                    outStack();
-                    clear = 0;
-                }
+                showBuff.setLength(0);
+                view.setText("0");
+                clearStack();
+                clear = 0;
                 break;
             case R.id.button_Symbol:
                 if (showBuff.length() != 0) {
@@ -132,15 +123,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.button_Division:
                 if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.DIVISION){
+                        weight.getFirst() < NumberOperate.DIVISION) {
                     inStack(NumberOperate.DIVISION, "division");
                     showBuff.setLength(0);
-                }else {
+                } else {
                     String result = showBuff.toString();
-                    numberList.addFirst(result);
+                    if (!showBuff.toString().isEmpty())
+                        numberList.addFirst(showBuff.toString());
                     result = calculated();
                     view.setText(result);
                     outStack();
+                    if (result.equals("Error")) {
+                        showBuff.setLength(0);
+                        clearStack();
+                        clear = 0;
+                        break;
+                    }
                     inStack(NumberOperate.DIVISION, "division", result);
                     showBuff.setLength(0);
                 }
@@ -149,65 +147,88 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.button_Seven:
                 showBuff.append("7");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Eight:
                 showBuff.append("8");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Nine:
                 showBuff.append("9");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Multiply:
                 if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.MULTIPLY){
+                        weight.getFirst() < NumberOperate.MULTIPLY) {
                     inStack(NumberOperate.MULTIPLY, "multiply");
                     showBuff.setLength(0);
-                }else {
-                    String result = showBuff.toString();
-                    numberList.addFirst(result);
-                    result = calculated();
-                    view.setText(result);
-                    outStack();
-                    inStack(NumberOperate.MULTIPLY, "multiply", result);
-                    showBuff.setLength(0);
+                } else {
+                    do {
+                        String result = showBuff.toString();
+                        numberList.addFirst(result);
+                        result = calculated();
+                        view.setText(result);
+                        outStack();
+                        inStack(NumberOperate.MULTIPLY, "multiply", result);
+                        showBuff.setLength(0);
+                    }while (weight.getFirst() < NumberOperate.MULTIPLY);
                 }
                 break;
 
             case R.id.button_Four:
                 showBuff.append("4");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Five:
                 showBuff.append("5");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Six:
                 showBuff.append("6");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Minus:
-//                calculated(NumberOperate.MINUS, "minus");
+                if (weight.size() == 0 ||
+                        weight.getFirst() < NumberOperate.ADD) {
+                    inStack(NumberOperate.MINUS, "minus");
+                    showBuff.setLength(0);
+                } else {
+                    String result = showBuff.toString();
+                    numberList.addFirst(result);
+                    result = calculated();
+                    view.setText(result);
+                    outStack();
+                    inStack(NumberOperate.MINUS, "minus", result);
+                    showBuff.setLength(0);
+                }
                 break;
 
             case R.id.button_One:
                 showBuff.append("1");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Two:
                 showBuff.append("2");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Three:
                 showBuff.append("3");
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Add:
                 if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.ADD){
+                        weight.getFirst() < NumberOperate.ADD) {
                     inStack(NumberOperate.ADD, "add");
                     showBuff.setLength(0);
-                }else {
+                } else {
                     String result = showBuff.toString();
                     numberList.addFirst(result);
                     result = calculated();
@@ -233,6 +254,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     showBuff.append(".");
                 }
                 view.setText(showBuff.toString());
+                clear = 1;
                 break;
             case R.id.button_Equal:
                 String result = showBuff.toString();
@@ -245,45 +267,69 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 view.setText(numberList.getFirst());
                 break;
         }
+
+        if (clear == 0)
+            drop.setText("AC");
+        else
+            drop.setText("C");
     }
 
     private String calculated() {
-        double number1 = Double.parseDouble(numberList.getFirst());
-        numberList.removeFirst();
-        double number2 = Double.parseDouble(numberList.getFirst());
-        double number3 = 0;
-        switch (operateSymbol.getFirst()) {
-            case "add":
-                number3 = number2 + number1;
-                break;
-            case "minus":
-                number3 = number2 - number1;
-                break;
-            case "multiply":
-                number3 = number2 * number1;
-                break;
-            case "division":
-                number3 = number2 / number1;
-                break;
+        if (numberList.size() >= 2) {
+            double number1 = Double.parseDouble(numberList.getFirst());
+            numberList.removeFirst();
+            double number2 = Double.parseDouble(numberList.getFirst());
+            double number3 = 0;
+            switch (operateSymbol.getFirst()) {
+                case "add":
+                    number3 = number2 + number1;
+                    break;
+                case "minus":
+                    number3 = number2 - number1;
+                    break;
+                case "multiply":
+                    number3 = number2 * number1;
+                    break;
+                case "division":
+                    if (number1 == 0)
+                        return "Error";
+                    number3 = number2 / number1;
+                    break;
+            }
+            return numberOperate.dropTail(String.valueOf(number3));
+        } else {
+            return "0";
         }
-        return numberOperate.dropTail(String.valueOf(number3));
+    }
+
+    private void clearStack(){
+        if (!operateSymbol.isEmpty())
+            operateSymbol.clear();
+        if (!weight.isEmpty())
+            weight.clear();
+        if (!numberList.isEmpty())
+            numberList.clear();
     }
 
     private void outStack() {
-        operateSymbol.removeFirst();
-        weight.removeFirst();
-        numberList.removeFirst();
+        if (!operateSymbol.isEmpty())
+            operateSymbol.removeFirst();
+        if (!weight.isEmpty())
+            weight.removeFirst();
+        if (!numberList.isEmpty())
+            numberList.removeFirst();
     }
 
     private void inStack(int model, String symbol, String number) {
-        weight.add(model);
+        weight.addFirst(model);
         operateSymbol.addFirst(symbol);
         numberList.addFirst(number);
     }
 
     private void inStack(int model, String symbol) {
-        weight.add(model);
+        weight.addFirst(model);
         operateSymbol.addFirst(symbol);
-        numberList.addFirst(showBuff.toString());
+        if (!showBuff.toString().isEmpty())
+            numberList.addFirst(showBuff.toString());
     }
 }
