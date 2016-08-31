@@ -1,6 +1,7 @@
 package com.example.leiyun.calculator;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private LinkedList<Integer> weight = new LinkedList<Integer>(); //符号权限栈
     private LinkedList<String> operateSymbol = new LinkedList<String>(); //符号栈
     private int clear = 0;
+    private int signal = 1;
 
 
     @Override
@@ -109,6 +111,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 view.setText("0");
                 clearStack();
                 clear = 0;
+                signal = 1;
                 break;
             case R.id.button_Symbol:
                 if (showBuff.length() != 0) {
@@ -122,25 +125,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.button_Percent:
                 break;
             case R.id.button_Division:
-                if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.DIVISION) {
-                    inStack(NumberOperate.DIVISION, "division");
-                    showBuff.setLength(0);
-                } else {
-                    String result = showBuff.toString();
-                    if (!showBuff.toString().isEmpty())
-                        numberList.addFirst(showBuff.toString());
-                    result = calculated();
-                    view.setText(result);
-                    outStack();
-                    if (result.equals("Error")) {
+                if (signal == 1) { //检查是否是第一次按下去
+                    if (weight.size() == 0 ||
+                            weight.getFirst() < NumberOperate.DIVISION) {
+                        inStack(NumberOperate.DIVISION, "division");
                         showBuff.setLength(0);
-                        clearStack();
-                        clear = 0;
-                        break;
+                    } else {
+                        String result = view.getText().toString();
+                        numberList.addFirst(result);
+                        result = calculated();
+                        view.setText(result);
+                        outStack();
+                        if (result.equals("Error")) {
+                            showBuff.setLength(0);
+                            clearStack();
+                            clear = 0;
+                            break;
+                        }
+                        inStack(NumberOperate.DIVISION, "division", result);
+                        showBuff.setLength(0);
                     }
-                    inStack(NumberOperate.DIVISION, "division", result);
-                    showBuff.setLength(0);
+                    division.setBackgroundResource(R.drawable.pressed_one);
+                    signal = 0; //
+                }else {
+                    if (!weight.isEmpty()){
+                        weight.removeFirst();
+                        operateSymbol.removeFirst();
+                    }else {
+                        weight.addFirst(NumberOperate.DIVISION);
+                        operateSymbol.addFirst("division");
+                    }
                 }
                 break;
 
@@ -148,6 +162,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 showBuff.append("7");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
             case R.id.button_Eight:
                 showBuff.append("8");
@@ -173,7 +188,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         outStack();
                         inStack(NumberOperate.MULTIPLY, "multiply", result);
                         showBuff.setLength(0);
-                    }while (weight.getFirst() < NumberOperate.MULTIPLY);
+                    } while (weight.getFirst() < NumberOperate.MULTIPLY);
                 }
                 break;
 
@@ -272,10 +287,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             drop.setText("AC");
         else
             drop.setText("C");
+
+        if (signal == 1)
+            division.setBackgroundResource(R.drawable.shape_three);
     }
 
     private String calculated() {
-        if (numberList.size() >= 2) {
+        if (numberList.size() >= 2) { //保证运算时有两个数在数字栈中
             double number1 = Double.parseDouble(numberList.getFirst());
             numberList.removeFirst();
             double number2 = Double.parseDouble(numberList.getFirst());
@@ -302,7 +320,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void clearStack(){
+    private void clearStack() {
         if (!operateSymbol.isEmpty())
             operateSymbol.clear();
         if (!weight.isEmpty())
@@ -329,7 +347,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void inStack(int model, String symbol) {
         weight.addFirst(model);
         operateSymbol.addFirst(symbol);
-        if (!showBuff.toString().isEmpty())
-            numberList.addFirst(showBuff.toString());
+        numberList.addFirst(view.getText().toString());
     }
 }
