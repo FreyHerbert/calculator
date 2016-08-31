@@ -106,14 +106,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_AC:
+            case R.id.button_AC: { //清空
                 showBuff.setLength(0);
                 view.setText("0");
                 clearStack();
                 clear = 0;
                 signal = 1;
                 break;
-            case R.id.button_Symbol:
+            }
+
+            case R.id.button_Symbol: { //相反数
                 if (showBuff.length() != 0) {
                     String s = numberOperate.
                             symbolTranslate(showBuff.toString());
@@ -122,9 +124,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     view.setText(showBuff.toString());
                 }
                 break;
-            case R.id.button_Percent:
+            }
+
+            case R.id.button_Percent: { //百分比
                 break;
-            case R.id.button_Division:
+            }
+
+            case R.id.button_Division: { // 除法运算
+
                 if (signal == 1) { //检查是否是第一次按下去
                     if (weight.size() == 0 ||
                             weight.getFirst() < NumberOperate.DIVISION) {
@@ -146,35 +153,44 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         showBuff.setLength(0);
                     }
                     division.setBackgroundResource(R.drawable.pressed_one);
-                    signal = 0; //
-                }else {
-                    if (!weight.isEmpty()){
+                    signal = 0;
+                } else { //重复摁的时候
+                    if (!weight.isEmpty()) {
                         weight.removeFirst();
                         operateSymbol.removeFirst();
-                    }else {
+                    } else {
                         weight.addFirst(NumberOperate.DIVISION);
                         operateSymbol.addFirst("division");
                     }
                 }
                 break;
+            }
 
-            case R.id.button_Seven:
+
+            case R.id.button_Seven: { // 数字7
                 showBuff.append("7");
                 view.setText(showBuff.toString());
                 clear = 1;
                 signal = 1;
                 break;
-            case R.id.button_Eight:
+            }
+            case R.id.button_Eight: { // 数字8
                 showBuff.append("8");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Nine:
+            }
+
+            case R.id.button_Nine: { // 数字9
                 showBuff.append("9");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Multiply:
+            }
+
+            case R.id.button_Multiply: { // 乘法运算
                 if (weight.size() == 0 ||
                         weight.getFirst() < NumberOperate.MULTIPLY) {
                     inStack(NumberOperate.MULTIPLY, "multiply");
@@ -191,54 +207,95 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     } while (weight.getFirst() < NumberOperate.MULTIPLY);
                 }
                 break;
+            }
 
-            case R.id.button_Four:
+
+            case R.id.button_Four: { // 数字4
                 showBuff.append("4");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Five:
+            }
+
+            case R.id.button_Five: { // 数字5
                 showBuff.append("5");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Six:
+            }
+
+            case R.id.button_Six: { // 数字6
                 showBuff.append("6");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Minus:
-                if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.ADD) {
-                    inStack(NumberOperate.MINUS, "minus");
-                    showBuff.setLength(0);
-                } else {
-                    String result = showBuff.toString();
-                    numberList.addFirst(result);
-                    result = calculated();
-                    view.setText(result);
-                    outStack();
-                    inStack(NumberOperate.MINUS, "minus", result);
-                    showBuff.setLength(0);
+            }
+
+            case R.id.button_Minus: { //减法运算
+
+                if (signal == 1) { //检查是否是第一次按下去
+                    if (weight.size() == 0 ||
+                            weight.getFirst() < NumberOperate.DIVISION) {
+                        inStack(NumberOperate.MINUS, "minus");
+                        showBuff.setLength(0);
+                    } else {
+                        String result = view.getText().toString();
+                        numberList.addFirst(result);
+                        result = calculated();
+                        view.setText(result);
+                        outStack();
+                        if (result.equals("Error")) {
+                            showBuff.setLength(0);
+                            clearStack();
+                            clear = 0;
+                            break;
+                        }
+                        inStack(NumberOperate.MINUS, "minus", result);
+                        showBuff.setLength(0);
+                    }
+                    minus.setBackgroundResource(R.drawable.pressed_one);
+                    signal = 0;
+                } else { //重复摁的时候
+                    if (!weight.isEmpty()) {
+                        weight.removeFirst();
+                        operateSymbol.removeFirst();
+                    } else {
+                        weight.addFirst(NumberOperate.MINUS);
+                        operateSymbol.addFirst("minus");
+                    }
                 }
                 break;
+            }
 
-            case R.id.button_One:
+
+            case R.id.button_One: { // 数字1
                 showBuff.append("1");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Two:
+            }
+
+            case R.id.button_Two: { // 数字2
                 showBuff.append("2");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Three:
+            }
+
+            case R.id.button_Three: { // 数字3
                 showBuff.append("3");
                 view.setText(showBuff.toString());
                 clear = 1;
+                signal = 1;
                 break;
-            case R.id.button_Add:
+            }
+
+            case R.id.button_Add: { //加法运算
                 if (weight.size() == 0 ||
                         weight.getFirst() < NumberOperate.ADD) {
                     inStack(NumberOperate.ADD, "add");
@@ -253,16 +310,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     showBuff.setLength(0);
                 }
                 break;
+            }
 
-            case R.id.button_Zero:
+
+            case R.id.button_Zero: { // 数字0
                 if (view.getText().charAt(0) == '0')
                     view.setText("0");
                 else {
                     showBuff.append("0");
                     view.setText(showBuff.toString());
                 }
+                signal = 1;
                 break;
-            case R.id.button_Point:
+            }
+
+            case R.id.button_Point: { // 点
                 if (showBuff.length() == 0) {
                     showBuff.append("0.");
                 } else if (!showBuff.toString().contains(".")) {
@@ -271,7 +333,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 view.setText(showBuff.toString());
                 clear = 1;
                 break;
-            case R.id.button_Equal:
+            }
+
+            case R.id.button_Equal: { // 等于
                 String result = showBuff.toString();
                 while (!weight.isEmpty()) {
                     numberList.addFirst(result);
@@ -281,6 +345,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 numberList.addFirst(result);
                 view.setText(numberList.getFirst());
                 break;
+            }
         }
 
         if (clear == 0)
@@ -288,10 +353,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
         else
             drop.setText("C");
 
-        if (signal == 1)
+        if (signal == 1) {
             division.setBackgroundResource(R.drawable.shape_three);
+            minus.setBackgroundResource(R.drawable.shape_three);
+        }
     }
 
+    /**
+     * 本函数将使用operateSymbol栈中第一个弹出的运算符为条件进行数学运算
+     * @return 返回运算结果
+     */
     private String calculated() {
         if (numberList.size() >= 2) { //保证运算时有两个数在数字栈中
             double number1 = Double.parseDouble(numberList.getFirst());
@@ -320,6 +391,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    /**
+     * 本函数用于清空栈
+     */
     private void clearStack() {
         if (!operateSymbol.isEmpty())
             operateSymbol.clear();
@@ -329,6 +403,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             numberList.clear();
     }
 
+    /**
+     * 本函数是出栈用的
+     */
     private void outStack() {
         if (!operateSymbol.isEmpty())
             operateSymbol.removeFirst();
@@ -338,6 +415,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             numberList.removeFirst();
     }
 
+    /**
+     * 本函数将参数压入对应的栈中
+     * @param model 运算符的权限
+     * @param symbol 运算符注明运算时需要
+     * @param number 运算的数字
+     */
     private void inStack(int model, String symbol, String number) {
         weight.addFirst(model);
         operateSymbol.addFirst(symbol);
