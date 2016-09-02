@@ -145,26 +145,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             result = calculated();
                             view.setText(result);
                             outStack();
-                            if (result.equals("Error")) {
-                                showBuff.setLength(0);
-                                clearStack();
-                                clear = 0;
-                                break;
-                            }
                         }while (!weight.isEmpty() && weight.getFirst() >= NumberOperate.DIVISION);
                         inStack(NumberOperate.DIVISION, "division", result);
                         showBuff.setLength(0);
                     }
                     division.setBackgroundResource(R.drawable.pressed_one);
                     signal = 0;
-                } else { //重复摁的时候
-                    if (!weight.isEmpty()) {
-                        weight.removeFirst();
-                        operateSymbol.removeFirst();
-                    } else {
-                        weight.addFirst(NumberOperate.DIVISION);
-                        operateSymbol.addFirst("division");
-                    }
                 }
                 break;
             }
@@ -259,14 +245,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }
                     minus.setBackgroundResource(R.drawable.pressed_one);
                     signal = 0;
-                } else { //重复摁的时候
-                    if (!weight.isEmpty()) {
-                        weight.removeFirst();
-                        operateSymbol.removeFirst();
-                    } else {
-                        weight.addFirst(NumberOperate.MINUS);
-                        operateSymbol.addFirst("minus");
-                    }
                 }
                 break;
             }
@@ -348,6 +326,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 numberList.addFirst(result);
                 view.setText(numberList.getFirst());
+                if (result.equals("Error"))
+                    clearStack();
                 break;
             }
         }
@@ -361,6 +341,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             division.setBackgroundResource(R.drawable.shape_three);
             minus.setBackgroundResource(R.drawable.shape_three);
         }
+
+        if (view.getText().toString().equals("Error")) {
+            showBuff.setLength(0);
+            clear = 0;
+            return;
+        }
     }
 
     /**
@@ -368,6 +354,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * @return 返回运算结果
      */
     private String calculated() {
+        if (numberList.contains("Error")){
+            return "Error";
+        }
+
         if (numberList.size() >= 2) { //保证运算时有两个数在数字栈中
             double number1 = Double.parseDouble(numberList.getFirst());
             numberList.removeFirst();
@@ -420,9 +410,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     /**
-     * 本函数将参数压入对应的栈中
+     * 本函数将参数压入对应的栈中,并且重载了该函数
      * @param model 运算符的权限
-     * @param symbol 运算符注明运算时需要
+     * @param symbol 运算符
      * @param number 运算的数字
      */
     private void inStack(int model, String symbol, String number) {
@@ -431,9 +421,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
         numberList.addFirst(number);
     }
 
+
     private void inStack(int model, String symbol) {
         weight.addFirst(model);
         operateSymbol.addFirst(symbol);
         numberList.addFirst(view.getText().toString());
+    }
+
+    /**
+     * 本函数是整个运算的集合，进行多项式的计算
+     * @param model     运算符的权限
+     * @param symbol    运算符
+     * @param button    操作的按钮
+     */
+    private void operate(int model, String symbol, Button button){
+        if (signal == 1) { //检查是否是第一次按下去
+            if (weight.size() == 0 ||
+                    weight.getFirst() < model) {
+                inStack(model, symbol);
+                showBuff.setLength(0);
+            } else {
+                String result;
+                do {
+                    result = view.getText().toString();
+                    numberList.addFirst(result);
+                    result = calculated();
+                    view.setText(result);
+                    outStack();
+                }while (!weight.isEmpty() && weight.getFirst() >= model); // 进行多项式的判断
+                inStack(model, symbol, result);
+                showBuff.setLength(0);
+            }
+            button.setBackgroundResource(R.drawable.pressed_one);
+            signal = 0;
+        }
     }
 }
