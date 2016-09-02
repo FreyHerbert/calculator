@@ -131,27 +131,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             case R.id.button_Division: { // 除法运算
-
-                if (signal == 1) { //检查是否是第一次按下去
-                    if (weight.size() == 0 ||
-                            weight.getFirst() < NumberOperate.DIVISION) {
-                        inStack(NumberOperate.DIVISION, "division");
-                        showBuff.setLength(0);
-                    } else {
-                        String result;
-                        do {
-                            result = view.getText().toString();
-                            numberList.addFirst(result);
-                            result = calculated();
-                            view.setText(result);
-                            outStack();
-                        }while (!weight.isEmpty() && weight.getFirst() >= NumberOperate.DIVISION);
-                        inStack(NumberOperate.DIVISION, "division", result);
-                        showBuff.setLength(0);
-                    }
-                    division.setBackgroundResource(R.drawable.pressed_one);
-                    signal = 0;
-                }
+                operate(NumberOperate.DIVISION, "division", division);
                 break;
             }
 
@@ -180,22 +160,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             case R.id.button_Multiply: { // 乘法运算
-                if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.MULTIPLY) {
-                    inStack(NumberOperate.MULTIPLY, "multiply");
-                    showBuff.setLength(0);
-                } else {
-                    String result;
-                    do {
-                        result = view.getText().toString();
-                        numberList.addFirst(result);
-                        result = calculated();
-                        view.setText(result);
-                        outStack();
-                    } while (weight.getFirst() >= NumberOperate.MULTIPLY);
-                    inStack(NumberOperate.MULTIPLY, "multiply", result);
-                    showBuff.setLength(0);
-                }
+                operate(NumberOperate.MULTIPLY, "multiply", multiply);
                 break;
             }
 
@@ -225,27 +190,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             case R.id.button_Minus: { //减法运算
-
-                if (signal == 1) { //检查是否是第一次按下去
-                    if (weight.size() == 0 ||
-                            weight.getFirst() < NumberOperate.MINUS) {
-                        inStack(NumberOperate.MINUS, "minus");
-                        showBuff.setLength(0);
-                    } else {
-                        String result;
-                        do {
-                            result = view.getText().toString();
-                            numberList.addFirst(result);
-                            result = calculated();
-                            view.setText(result);
-                            outStack();
-                        }while (!weight.isEmpty() && weight.getFirst() >= NumberOperate.MINUS);
-                        inStack(NumberOperate.MINUS, "minus", result);
-                        showBuff.setLength(0);
-                    }
-                    minus.setBackgroundResource(R.drawable.pressed_one);
-                    signal = 0;
-                }
+                operate(NumberOperate.MINUS, "minus", minus);
                 break;
             }
 
@@ -275,22 +220,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             case R.id.button_Add: { //加法运算
-                if (weight.size() == 0 ||
-                        weight.getFirst() < NumberOperate.ADD) {
-                    inStack(NumberOperate.ADD, "add");
-                    showBuff.setLength(0);
-                } else {
-                    String result;
-                    do {
-                        result = view.getText().toString();
-                        numberList.addFirst(result);
-                        result = calculated();
-                        view.setText(result);
-                        outStack();
-                    } while (!weight.isEmpty() && weight.getFirst() >= NumberOperate.ADD);
-                    inStack(NumberOperate.ADD, "add", result);
-                    showBuff.setLength(0);
-                }
+                operate(NumberOperate.ADD, "add", add);
                 break;
             }
 
@@ -340,6 +270,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (signal == 1) {
             division.setBackgroundResource(R.drawable.shape_three);
             minus.setBackgroundResource(R.drawable.shape_three);
+            multiply.setBackgroundResource(R.drawable.shape_three);
+            add.setBackgroundResource(R.drawable.shape_three);
         }
 
         if (view.getText().toString().equals("Error")) {
