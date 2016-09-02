@@ -27,6 +27,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private LinkedList<String> operateSymbol = new LinkedList<String>(); //符号栈
     private int clear = 0;
     private int signal = 1;
+    private int signalEqual = 1;
+    private String number;
 
 
     @Override
@@ -127,6 +129,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             case R.id.button_Percent: { //百分比
+                double number1 = Double.parseDouble(view.getText().toString());
+                number1 /= 100;
+                view.setText(String.valueOf(number1));
                 break;
             }
 
@@ -248,16 +253,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             case R.id.button_Equal: { // 等于
-                String result = showBuff.toString();
-                while (!weight.isEmpty()) {
-                    numberList.addFirst(result);
-                    result = calculated();
-                    outStack();
+                if (!weight.isEmpty()){
+                    String result = view.getText().toString();
+                    if (signalEqual == 1) {
+                        number = result;
+                        signalEqual = 0;
+                    }
+                    int model = weight.getFirst();
+                    String symbol = operateSymbol.getFirst();
+                    while (!weight.isEmpty()) {
+                        numberList.addFirst(result);
+                        result = calculated();
+                        outStack();
+                    }
+                    weight.addFirst(model);
+                    operateSymbol.addFirst(symbol);
+                    numberList.addFirst(number);
+                    view.setText(result);
+                    if (result.equals("Error"))
+                        clearStack();
+                    signal = 1;
                 }
-                numberList.addFirst(result);
-                view.setText(numberList.getFirst());
-                if (result.equals("Error"))
-                    clearStack();
+                showBuff.setLength(0);
                 break;
             }
         }
@@ -367,6 +384,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
      * @param button    操作的按钮
      */
     private void operate(int model, String symbol, Button button){
+        if (signalEqual == 0) {
+            clearStack();
+        }
+
         if (signal == 1) { //检查是否是第一次按下去
             if (weight.size() == 0 ||
                     weight.getFirst() < model) {
@@ -387,5 +408,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             button.setBackgroundResource(R.drawable.pressed_one);
             signal = 0;
         }
+        signalEqual = 1;
     }
 }
